@@ -1,0 +1,12 @@
+welt
+bausteine
+
+spieler
+    superfähikeiten
+
+gegner
+    größe leben
+
+physik
+    spieler
+    bausteine
