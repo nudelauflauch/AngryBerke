@@ -1,0 +1,57 @@
+[
+    {
+        "type": "wood_blocks",
+        "positions": [
+            [
+                500,
+                500,
+                100,
+                100
+            ],
+            [
+                0,
+                100,
+                100,
+                100
+            ]
+        ]
+    },
+    {
+        "type": "sollid_blocks",
+        "positions": [
+            [
+                0,
+                0,
+                100,
+                100
+            ]
+        ]
+    },
+    {
+        "type": "player_spawns",
+        "players": [
+            "0",
+            "2",
+            "5"
+        ],
+        "positions": [
+            [
+                100,
+                100,
+                100,
+                100
+            ]
+        ]
+    },
+    {
+        "type": "opponent_spawns",
+        "positions": [
+            [
+                300,
+                300,
+                100,
+                100
+            ]
+        ]
+    }
+]
