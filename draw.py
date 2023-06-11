@@ -9,7 +9,7 @@ pg.font.init()
 stat_font = pg.font.Font(None, 50)
 esc_font = pg.font.Font(None, 36)
 
-    
+# Hintergrund Grau/ Grüne Buttons/ schwarz (0,0,0)   
 def draw_esc(screen, in_game):
     gray = pg.Surface((1920, 1080))
     gray.fill((211, 211, 211))

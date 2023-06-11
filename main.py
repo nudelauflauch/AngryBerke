@@ -5,8 +5,11 @@ import level_loader
 import logger_manager
 import traceback
 
+# Laden des Hintergrundbildes für das Menü
 menue_bg = pg.image.load("assets/bg/menue_bg.png")
 menue_bg = pg.transform.scale(menue_bg, (1920, 1080))
+
+# Initialisierung des Loggers
 logger = logger_manager.Logger()
 
 def draw_menu(screen:pg.Surface, levels):
@@ -17,8 +20,9 @@ def draw_menu(screen:pg.Surface, levels):
     for i, level in enumerate(levels):
         screen.blit(level.update(), level.pos)
 
-
+# Hauptfunktion
 def main():
+# Initialisierung von Pygame
     pg.init()
 
     levels = level_loader.init_levels()
@@ -37,6 +41,7 @@ def main():
 
     logger.log("Starting", "Init complet, starting game loop")
 
+#Main-Loop
     while running:
         tick += 1
         clock.tick(FPS)
@@ -91,13 +96,15 @@ def main():
         if tick%16 == 0:
             if in_game:
                 main_game.handle_main_game(game, space, world_obj, screen, renderer, is_esc)
+# Außerhalb des Speils / im Menue
             else:
                 draw_menu(screen, levels)
                 if is_esc:
                     draw.draw_esc(screen, False)
 
         pg.display.flip()
-
+        
+# Startet das spiel
 if __name__ == "__main__":
     try:
         main()
