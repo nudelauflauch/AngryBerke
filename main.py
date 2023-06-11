@@ -1,63 +1,15 @@
 import pygame as pg
-import os
-import level_selector
-import json
-
+import main_game
+import draw
+import level_loader
+import logger_manager
+import traceback
 
 menue_bg = pg.image.load("assets/bg/menue_bg.png")
 menue_bg = pg.transform.scale(menue_bg, (1920, 1080))
+logger = logger_manager.Logger()
 
-pg.init()
-pg.font.init()
-esc_font = pg.font.Font(None, 36)
-
-def gen_level_settings():
-    with open("level_progress.save", "w") as progress:
-        levels = os.listdir("./gen_world")
-        for i, level in enumerate(levels):
-            content = level.replace(".json", "") + ":-1"
-            if len(levels) - 1 != i:
-                content += "\n"
-
-            progress.write(content)
-
-def load_level_progress():
-    level_progress = {}
-    with open("level_progress.save", "r") as progress:
-        for save in progress.readlines():
-            content = save.split(":")
-            level_progress[content[0]] = int(content[1])
-
-    return level_progress
-
-def init():
-    if not os.path.exists("level_progress.save"):
-        gen_level_settings()
-    else:
-        level_progress = load_level_progress()
-
-    levels = []
-
-    for file in os.listdir("./gen_world"):
-        with open("./gen_world/" + file, "r") as world:
-            world_contend = json.loads(world.read())
-            for index in world_contend:
-                if index["type"] == "background":
-                    levels.append([index["bg"], file.replace(".json", "")])
-    
-    for i, unpack in enumerate(levels):
-        bg, level_name = unpack
-        level_bg = pg.image.load("assets/bg/" + bg + ".png")
-        try:
-            score = level_progress[level_name]
-        except KeyError:
-            gen_level_settings()
-            init()
-        levels[i] = level_selector.LevelSelector((i*400 + 50 + i*50, 400), level_bg, score, level_name)
-
-    return levels
-
-def draw(screen, levels):
+def draw_menu(screen:pg.Surface, levels):
     screen.fill("white")
 
     screen.blit(menue_bg, (0,0))
@@ -65,30 +17,17 @@ def draw(screen, levels):
     for i, level in enumerate(levels):
         screen.blit(level.update(), level.pos)
 
-def draw_esc(screen, in_game):
-    gray = pg.Surface((1920, 1080))
-    gray.fill((211, 211, 211))
-    gray.set_alpha(150)
-    screen.blit(gray, (0,0))
-
-    pg.draw.rect(screen, (42, 173, 21), (960 - 200, 540 - 20, 400, 40))
-    pg.draw.rect(screen, (42, 173, 21), (960 - 200, 540 - 80, 400, 40))
-
-    screen.blit(esc_font.render("Resume", True, (0,0,0)), (960 - 200, 540 - 70))
-    screen.blit(esc_font.render("Exit To Desktop", True, (0,0,0)), (960 - 200, 540 - 10))
-
-    if in_game:
-        pg.draw.rect(screen, (42, 173, 21), (960 - 200, 540 + 40, 400, 40))
-        screen.blit(esc_font.render("Return To Menue", True, (0,0,0)), (960 - 200, 540 + 50))
-
 
 def main():
-    levels = init()
+    pg.init()
+
+    levels = level_loader.init_levels()
+    logger.log("Starting", "Found levels: ", len(levels))
     
     WINDOW_SIZE = (1920, 1080)
-    screen = pg.display.set_mode(WINDOW_SIZE, )#pg.FULLSCREEN)
+    screen = pg.display.set_mode(WINDOW_SIZE, )# pg.FULLSCREEN)
 
-    FPS = 60
+    FPS = 1000
     clock = pg.time.Clock()
     running = True
     is_esc = False
@@ -96,27 +35,37 @@ def main():
     tick = 0
     old_esc_tick = 0
 
+    logger.log("Starting", "Init complet, starting game loop")
+
     while running:
         tick += 1
         clock.tick(FPS)
+        if in_game:
+            space.step(1/1000)    
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
 
             if event.type == pg.MOUSEBUTTONDOWN:
-                if not is_esc:
+                if not is_esc and not in_game:
                     for level in levels:
-                        #starts a new game
-                        if (level.pos[0] <= pg.mouse.get_pos()[0] <= level.pos[0] + 400
-                            and level.pos[0]<= pg.mouse.get_pos()[1] <= level.pos[1] + 400):
+                        #tries to starts a new game
+                        if level.pos[0] <= pg.mouse.get_pos()[0] <= level.pos[0] + 400 and level.pos[1]<= pg.mouse.get_pos()[1] <= level.pos[1] + 400:
                             world = level.get_level()
+        
                             if world:
+                                space, world_obj, renderer, game = main_game.init(world, logger)
+                                game.start()
                                 in_game = True
-                                pass
-                                #Felix Game connecten
+                                logger.log("GameStart", "Starting game", world)
+                
+                if in_game:
+                    main_game.mouse_shoot(game, world_obj, logger)
+                        
+                
+                #handles escape mouse presses         
                 if is_esc:
-                    #handles exit
                     if (960 - 200 <= pg.mouse.get_pos()[0] <= 960 - 200 + 400
                     and 540 - 10 <= pg.mouse.get_pos()[1] <= 540 - 10 + 40):
                         running = False
@@ -124,17 +73,37 @@ def main():
                     if (960 - 200 <= pg.mouse.get_pos()[0] <= 960 - 200 + 400
                     and 540 - 70 <= pg.mouse.get_pos()[1] <= 540 - 70 + 40):
                         is_esc = False
+                    
+                    if in_game:
+                        if (960 - 200 <= pg.mouse.get_pos()[0] <= 960 - 200 + 400
+                        and 540 + 40 <= pg.mouse.get_pos()[1] <= 540 + 40 + 40):
+                            in_game = False
+                            is_esc = False
+                            levels = level_loader.init_levels()
+                            logger.log("GameStop", "Exiting to menue")
 
             if pg.key.get_pressed()[pg.K_ESCAPE]:
-                if old_esc_tick + 5 < tick:
+                if old_esc_tick + 30 < tick:
                     is_esc = not is_esc
                     old_esc_tick = tick
+
         
-        draw(screen, levels)
-        if is_esc:
-            draw_esc(screen, in_game)
+        if tick%16 == 0:
+            if in_game:
+                main_game.handle_main_game(game, space, world_obj, screen, renderer, is_esc)
+            else:
+                draw_menu(screen, levels)
+                if is_esc:
+                    draw.draw_esc(screen, False)
 
         pg.display.flip()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.log("ERROR", "KeyboardInterrupt")
+    except BaseException as e:
+        print(e)
+        logger.log("ERROR", traceback.format_exc())
+    logger.stop_logging()
