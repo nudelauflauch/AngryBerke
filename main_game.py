@@ -6,29 +6,17 @@ import draw
 import game_logic
 
 
-<<<<<<< Updated upstream
-def init(level, logger) -> (tuple[pymunk.Space, world.World, draw.Renderer, game_logic.Game]):
-
-    space = pymunk.Space()
-    
-    space.gravity = (0, 891)
-=======
 def init(level) -> (tuple[pymunk.Space, world.World, draw.Renderer, game_logic.Game]):
 
     space = pymunk.Space()
     
     space.gravity = (0, 2000)
->>>>>>> Stashed changes
     world_obj = world.World(level)
-    space = world_obj.add_to_space(space)
+    world_obj.add_to_space(space)
 
     renderer = draw.Renderer(world_obj)
 
-<<<<<<< Updated upstream
-    game = game_logic.Game(world_obj, space, logger)
-=======
     game = game_logic.Game(world_obj, space)
->>>>>>> Stashed changes
 
     collision_handler = space.add_default_collision_handler()
     collision_handler.post_solve = game.collisions
@@ -36,11 +24,7 @@ def init(level) -> (tuple[pymunk.Space, world.World, draw.Renderer, game_logic.G
     return space, world_obj, renderer, game
 
 
-<<<<<<< Updated upstream
-def mouse_shoot(game:game_logic.Game, world_obj:world.World, logger):
-=======
 def mouse_shoot(game:game_logic.Game, world_obj:world.World):
->>>>>>> Stashed changes
 
     spawn_area = (
         game.spawn_point[0] - 100,
@@ -71,16 +55,6 @@ def handle_main_game(game:game_logic.Game, space:pymunk.Space, world_obj:world.W
     if game.win:
         world_obj.shooting_berke = None
     else:
-<<<<<<< Updated upstream
-        if len(world_obj.player) != 0:
-            game.check_for_win()
-
-    if is_esc:
-        draw.draw_esc(screen, True)
-        game.change_moveability(pymunk.Body.STATIC)
-    else:
-        game.change_moveability(pymunk.Body.DYNAMIC)
-=======
         game.check_for_win()
 
     if is_esc:
@@ -91,4 +65,3 @@ def handle_main_game(game:game_logic.Game, space:pymunk.Space, world_obj:world.W
     else:
         game.resume()
         # logger_manager.Logger().log("Game", "Resuming game")
->>>>>>> Stashed changes
