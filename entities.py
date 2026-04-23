@@ -1,23 +1,12 @@
 from typing import Optional, Sequence, Tuple
 import pymunk
 from numpy import rad2deg
-<<<<<<< Updated upstream
-from pymunk.body import Body
-from pymunk.transform import Transform
-
-radius = 50
-mass = 10
-elasticity = 0.2
-friction = 0.4
-
-=======
 import pygame.transform
 
 radius = 50
 mass = 20
 elasticity = 0.2
 friction = 0.4
->>>>>>> Stashed changes
 
 class Pig(pymunk.Circle):
     
@@ -34,8 +23,6 @@ class Pig(pymunk.Circle):
 class Berke(Pig):
     def __init__(self, body: pymunk.Shape) -> None:
         super().__init__(body)
-<<<<<<< Updated upstream
-=======
 
 
 class WordRenderObject:
@@ -48,4 +35,3 @@ class WordRenderObject:
         if not self.img:
             self.img = img.copy()
             self.img = pygame.transform.scale(self.img, (self.width, self.height))
->>>>>>> Stashed changes

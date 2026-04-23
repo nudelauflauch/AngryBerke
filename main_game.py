@@ -18,8 +18,7 @@ def init(level) -> (tuple[pymunk.Space, world.World, draw.Renderer, game_logic.G
 
     game = game_logic.Game(world_obj, space)
 
-    collision_handler = space.add_default_collision_handler()
-    collision_handler.post_solve = game.collisions
+    space.on_collision(post_solve=game.collisions)
 
     return space, world_obj, renderer, game
 

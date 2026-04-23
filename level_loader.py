@@ -1,9 +1,6 @@
 import os, json, level_selector, pygame
 
-<<<<<<< Updated upstream
-=======
 #generate the progress for the levels
->>>>>>> Stashed changes
 def gen_level_settings():
     with open("level_progress.save", "w") as progress:
         levels = os.listdir("./gen_world")
@@ -14,10 +11,7 @@ def gen_level_settings():
 
             progress.write(content)
 
-<<<<<<< Updated upstream
-=======
 #loads the progress from the file
->>>>>>> Stashed changes
 def load_level_progress():
     level_progress = {}
     with open("level_progress.save", "r") as progress:
@@ -27,20 +21,12 @@ def load_level_progress():
 
     return level_progress
 
-<<<<<<< Updated upstream
-def init_levels():
-    if not os.path.exists("level_progress.save"):
-        gen_level_settings()
-    else:
-        level_progress = load_level_progress()
-=======
 #inits the levels and returns a list of level_selector.LevelSelector for rendering in main screen
 def init_levels():
     if not os.path.exists("level_progress.save"):
         gen_level_settings()
         
     level_progress = load_level_progress()
->>>>>>> Stashed changes
 
     levels = []
 
@@ -51,11 +37,7 @@ def init_levels():
                 if index["type"] == "background":
                     levels.append([index["bg"], file.replace(".json", "")])
     
-<<<<<<< Updated upstream
-    return_levels = [" " for i in range(len(levels))]
-=======
     return_levels = [None for i in range(len(levels))]
->>>>>>> Stashed changes
 
     for i, unpack in enumerate(levels):
         bg, level_name = unpack

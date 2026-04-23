@@ -12,10 +12,7 @@ class World:
         self.world_name = world
         self.shooting_berke = None
 
-<<<<<<< Updated upstream
-=======
     #loads the world from the json data
->>>>>>> Stashed changes
     def load_world(self, world: os.path):
         world_path = f"{os.getcwd()}/gen_world/{world}.json"
 
@@ -35,11 +32,7 @@ class World:
 
                 elif types["type"] == "player_spawns":
                     self.player_spawns = types["positions"]
-<<<<<<< Updated upstream
-                    self.player = types["players"]
-=======
                     self.players = types["players"]
->>>>>>> Stashed changes
 
                 elif types["type"] == "opponent_spawns":
                     self.opponent_spawns = types["positions"]
@@ -61,15 +54,11 @@ class World:
         for opponent in self.opponent_spawns:
             opponent = self.add_pigs_berke(opponent)
             self.entities.append(opponent)
-    
 
-<<<<<<< Updated upstream
         return self.space
     
 
-=======
     #addes a new static object to the space
->>>>>>> Stashed changes
     def add_static(self, coordinates):
         body = pymunk.Body(body_type=pymunk.Body.STATIC)
         body.position = coordinates[0:2]
